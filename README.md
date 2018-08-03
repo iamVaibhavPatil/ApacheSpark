@@ -40,7 +40,7 @@ Spark's focus on computation makes it different from the earlier big data softwa
 
 Sparks runs well on Hadoop storage, but it is used broadly in envrionments for which Haddop architecture does not make sense, such as the public cloud or streaming applications.
 
-**Libraries** 
+**Libraries**  
 Sparks supports standard libaries that ship with the engine as well as a wide array of external libraries published as third party packages by open source communities. Sparks includes libraries for SQL and structured data(Spark SQL), machine learning(MLlib), stream processing(Spark Streaming and new Structure Streaming), and graph analytics(GraphX).
 
 There are other open source libraries ffrom connectors for various storage systems to machine learning algorithms. We can check all the spark supported libraries - https://spark-packages.org/
