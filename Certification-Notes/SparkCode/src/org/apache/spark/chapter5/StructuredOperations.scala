@@ -165,5 +165,16 @@ object StructuredOperations {
    //*** Limit
    df.limit(10).show()
    
+   
+   //*** Repartition and Coalesce
+   println(df.rdd.getNumPartitions)
+   
+   // Repartition into 5 partition - Repartition will incur a full shuffle of the data, regardless of whether one is necessary
+   df.repartition(5)
+   println(df.rdd.getNumPartitions)
+   
+   // Coalesce - will not incur full shuffle and will try to combine partitions. 
+   // Below operation will shuffle data into 5 partition based on destination country and then Coalesce(combine) them
+   df.repartition(5, col("DEST_COUNTRY_NAME")).coalesce(2)
   }
 }
