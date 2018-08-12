@@ -33,9 +33,11 @@ object SchemaExample {
     
     val df = spark.read.format("json").schema(myManualSchema).load("D:\\Github\\ApacheSpark\\Certification-Notes\\data\\flight-data\\json\\2015-summary.json") 
     
-    // Select and SelectExpr
+    println("---Printing Schema---")
     df.printSchema()  
     
+    // Select and SelectExpr
+    println("---Selecting Data from Table---")
     df.select("DEST_COUNTRY_NAME").show(2)
     
     df.select("DEST_COUNTRY_NAME","ORIGIN_COUNTRY_NAME").show(2)
@@ -44,10 +46,47 @@ object SchemaExample {
     "*", // include all original columns
     "(DEST_COUNTRY_NAME = ORIGIN_COUNTRY_NAME) as withinCountry").show(2)
   
+    println("---Getting Average---")
     df.selectExpr("avg(count)", "count(distinct(DEST_COUNTRY_NAME))").show(2)
    
     // Converting to Spark Types(literals)
-    import org.apache.spark.sql.functions.{lit, expr}
+    import org.apache.spark.sql.functions.{lit, expr, col}
     df.select(expr("*"), lit(1).as("One")).show(2)
+    
+    // Add Column to DataFrame - withColumn method on DataFrame
+    df.withColumn("numberOne", lit(1)).show(2)
+    
+    // Add Column values based on expression while adding new Column to DataFrame
+    df.withColumn("numberOne", expr("ORIGIN_COUNTRY_NAME == DEST_COUNTRY_NAME")).show(2)
+    
+    // Rename the new Column by using withColumn and expression
+    df.withColumn("dest", expr("DEST_COUNTRY_NAME")).show(2)
+    
+    // Renaming an existing column using withColumnRenamed method to a new name
+    df.withColumnRenamed("DEST_COUNTRY_NAME", "Destination").show(2)
+    
+    // Reserved Characters and keywords - escape while column name
+    
+    // Don't need to escape as first argument is just a string
+    val dfWithLongColumnName = df.withColumn("This Long Column-Name", expr("ORIGIN_COUNTRY_NAME"))
+    dfWithLongColumnName.show(2)
+    
+    // Escape in below as we are referencing Column in the expression
+    dfWithLongColumnName.selectExpr(
+      "`This Long Column-Name`",
+      "`This Long Column-Name` as `new col`"
+    ).show(2)
+    
+    ///**** WE ONLY NEED TO ESCAPE EXPRESSIONS THAT USES RESERVED CHARACTERS or KEYWORDS***
+    
+    // Both below will result in same output
+    import org.apache.spark.sql.functions.{col}
+    dfWithLongColumnName.select(col("This Long Column-Name")).columns
+
+    dfWithLongColumnName.selectExpr("`This Long Column-Name`").columns
+    
+    
+    //---Case Sensitive-- By Default Spark is case insensitive.
+    
   }
 }
