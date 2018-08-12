@@ -112,7 +112,12 @@ object SchemaExample {
     //*** Unique Rows - using distinct method
     println(df.select("ORIGIN_COUNTRY_NAME", "DEST_COUNTRY_NAME").distinct().count())
     
-    //*** Random Samples
+    //*** Random Samples - Extracting a fraction of records from a DataFrame
+    val seed = 5
+    val withReplacement = false
+    val fraction = 0.5
+    val sampleDataFrame = df.sample(withReplacement, fraction, seed)
+    sampleDataFrame.show(5)
     
     
   }
