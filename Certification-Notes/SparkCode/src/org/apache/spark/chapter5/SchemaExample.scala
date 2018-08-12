@@ -127,5 +127,23 @@ object SchemaExample {
     println("Second DataFrame rows: ", dataFrames(1).count())
     
     
+    
+    //*** Concatenating and Appending Rows(Union)
+    import org.apache.spark.sql.Row
+    val schema = df.schema
+    val newRows = Seq(
+      Row("New Country", "Other Country", 5L),
+      Row("New Country2", "Other Country2", 5L)
+    )
+    val parallelizeRows = spark.sparkContext.parallelize(newRows)
+    val newDf = spark.createDataFrame(parallelizeRows, schema)
+    df.union(newDf)
+      .where("count == 5")
+      .where(col("ORIGIN_COUNTRY_NAME") =!= "United States")
+      .show()
+    
+      
+    
+      
   }
 }
