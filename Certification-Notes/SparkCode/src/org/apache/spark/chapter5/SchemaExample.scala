@@ -109,7 +109,10 @@ object SchemaExample {
     df.where(col("count") < 2).where(col("ORIGIN_COUNTRY_NAME") =!= "Croatia").show(2)
     
     
-    //*** Unique Rows
+    //*** Unique Rows - using distinct method
+    println(df.select("ORIGIN_COUNTRY_NAME", "DEST_COUNTRY_NAME").distinct().count())
+    
+    //*** Random Samples
     
     
   }
