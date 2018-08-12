@@ -163,7 +163,7 @@ object StructuredOperations {
    
    
    //*** Limit
-   
+   df.limit(10).show()
    
   }
 }
