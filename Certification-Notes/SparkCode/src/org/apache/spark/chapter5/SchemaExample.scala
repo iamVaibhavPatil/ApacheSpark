@@ -87,6 +87,6 @@ object SchemaExample {
     
     
     //---Case Sensitive-- By Default Spark is case insensitive.
-    
+    spark.conf.set("spark.sql.caseSensitive", "true")
   }
 }
