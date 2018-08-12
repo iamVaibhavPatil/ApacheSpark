@@ -114,7 +114,11 @@ object DataTypesExample {
    // Round up and Round Down
    df.select(round(lit(2.5)), bround(lit(2.5))).show(2)
    
-   
+   // Find Pearson Correlation Coefficient for 2 columns if cheaper things are typically bought in greater quantities
+   // We can either use stat functions on DataFrame or use corr function
+   import org.apache.spark.sql.functions.{corr}
+   df.stat.corr("Quantity", "UnitPrice")
+   df.select(corr("Quantity", "UnitPrice")).show()
    
   }
 }
