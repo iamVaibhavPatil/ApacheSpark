@@ -105,5 +105,12 @@ object SchemaExample {
     df.filter(col("count") < 2).show(2)
     df.where("count < 2").show(2)
     
+    // Chaining multiple AND filter
+    df.where(col("count") < 2).where(col("ORIGIN_COUNTRY_NAME") =!= "Croatia").show(2)
+    
+    
+    //*** Unique Rows
+    
+    
   }
 }
