@@ -119,6 +119,13 @@ object SchemaExample {
     val sampleDataFrame = df.sample(withReplacement, fraction, seed)
     sampleDataFrame.show(5)
     
+    //*** Random Splits
+    println("---Random Split---")
+    val dataFrames = df.randomSplit(Array(0.25, 0.75), seed)
+    println("Original DataFrame rows: ", df.count())
+    println("First DataFrame rows: ", dataFrames(0).count())
+    println("Second DataFrame rows: ", dataFrames(1).count())
+    
     
   }
 }
