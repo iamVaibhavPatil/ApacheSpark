@@ -176,5 +176,20 @@ object StructuredOperations {
    // Coalesce - will not incur full shuffle and will try to combine partitions. 
    // Below operation will shuffle data into 5 partition based on destination country and then Coalesce(combine) them
    df.repartition(5, col("DEST_COUNTRY_NAME")).coalesce(2)
+   
+   
+   //*** Collecting Rows to the Driver - collect() method
+   // collect - gets all the data from the entire DataFrame
+   // take - select the first N rows
+   // show - prints out the number of rows
+   val collectDf = df.limit(10)
+   collectDf.take(5)
+   collectDf.show()
+   collectDf.show(5, false)
+   collectDf.collect()
+   
+   // toLocalIterator - collects partitions to the driver as an iterator. Allows you to iterate over the entire dataset partition-by-partition in serial manner
+   collectDf.toLocalIterator()
+   
   }
 }
