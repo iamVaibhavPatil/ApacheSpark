@@ -96,7 +96,14 @@ object SchemaExample {
     //*** Cast column to another type - Changing Column type from int to long as below
     df.withColumn("count2", col("count").cast("long")).show(2)
     
-    //*** Filtering rows
+    //*** Filtering rows - Filter out the rows with an expression that is equal to false
+    // Create expression as String or build expression by using a set of column manipulations
+    // where / filter - Both are same
+    df.filter(expr("ORIGIN_COUNTRY_NAME == 'United States'")).show(5)
+    df.where(expr("ORIGIN_COUNTRY_NAME == 'United States'")).show(5)
+    
+    df.filter(col("count") < 2).show(2)
+    df.where("count < 2").show(2)
     
   }
 }
