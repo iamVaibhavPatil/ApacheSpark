@@ -8,7 +8,7 @@ import org.apache.spark.sql.types.{StructField, StructType, StringType, LongType
 import org.apache.spark.sql.types.Metadata
 
 
-object SchemaExample {
+object StructuredOperations {
 
   def main(args: Array[String]) {
    
@@ -142,7 +142,8 @@ object SchemaExample {
       .where(col("ORIGIN_COUNTRY_NAME") =!= "United States")
       .show()
     
-      
+    
+   //*** Sorting Rows
     
       
   }
