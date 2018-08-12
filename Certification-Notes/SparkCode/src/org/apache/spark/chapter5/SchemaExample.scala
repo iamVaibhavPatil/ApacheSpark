@@ -93,7 +93,10 @@ object SchemaExample {
     df.drop("ORIGIN_COUNTRY_NAME").show(5)
     df.drop("ORIGIN_COUNTRY_NAME", "DEST_COUNTRY_NAME").show(5)
     
-    // *** Cast column to another type
+    //*** Cast column to another type - Changing Column type from int to long as below
+    df.withColumn("count2", col("count").cast("long")).show(2)
+    
+    //*** Filtering rows
     
   }
 }
