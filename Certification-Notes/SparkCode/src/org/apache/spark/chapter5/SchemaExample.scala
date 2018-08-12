@@ -86,7 +86,14 @@ object SchemaExample {
     dfWithLongColumnName.selectExpr("`This Long Column-Name`").columns
     
     
-    //---Case Sensitive-- By Default Spark is case insensitive.
-    spark.conf.set("spark.sql.caseSensitive", "true")
+    //---Case Sensitive-- By Default Spark is case insensitive. We can change is using below configuration setting
+    //spark.conf.set("spark.sql.caseSensitive", "true")
+    
+    //*** Remove Column from DataFrame - drop method. Multiple columns can also be dropped
+    df.drop("ORIGIN_COUNTRY_NAME").show(5)
+    df.drop("ORIGIN_COUNTRY_NAME", "DEST_COUNTRY_NAME").show(5)
+    
+    // *** Cast column to another type
+    
   }
 }
