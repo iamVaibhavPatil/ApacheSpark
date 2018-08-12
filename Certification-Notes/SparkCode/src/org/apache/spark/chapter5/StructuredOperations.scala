@@ -143,8 +143,27 @@ object StructuredOperations {
       .show()
     
     
-   //*** Sorting Rows
-    
-      
+   //*** Sorting Rows - sort() or orderBy() - Default direction is ascending, We can use asc or desc function to specify direction
+   println("---Sorting Rows---")
+   df.sort("count").show(5)
+   df.orderBy("count", "DEST_COUNTRY_NAME").show(5)
+   df.orderBy(col("count"), col("DEST_COUNTRY_NAME")).show(5)
+   
+   println("---Sorting Rows with directions---")
+   import org.apache.spark.sql.functions.{asc, desc, asc_nulls_first, asc_nulls_last, desc_nulls_first, desc_nulls_last}
+   df.orderBy(expr("count desc")).show(2)
+   df.orderBy(desc("count"), asc("DEST_COUNTRY_NAME")).show(2)
+   
+   // For more optimization sort within each partition before another set of transformation - sortWithinPartitions
+   val sortedDf = spark.read.format("json")
+     .schema(myManualSchema)
+     .load("D:\\Github\\ApacheSpark\\Certification-Notes\\data\\flight-data\\json\\*-summary.json")
+     .sortWithinPartitions("count")
+   sortedDf.show(20)
+   
+   
+   //*** Limit
+   
+   
   }
 }
