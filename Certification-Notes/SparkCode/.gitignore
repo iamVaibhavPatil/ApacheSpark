@@ -1,6 +1,5 @@
 /bin/
-
 node_modules/
-
 .metadata/
 .cache-main
+/.temp-bin/

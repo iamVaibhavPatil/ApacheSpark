@@ -92,7 +92,29 @@ object DataTypesExample {
    
      
      
-   //*** - Working with Numbers
+   //*** - Working with Numbers - Second most important task after filtering is counting things
+     
+   // pow - function that raises a column to expressed power
+   import org.apache.spark.sql.functions.{pow}
+   val fabricatedQuantity = pow(col("Quantity") * col("UnitPrice"), 2) + 5
+   df.select(col("CustomerID"), col("Quantity"), fabricatedQuantity.alias("realQuantity")).show(2)
     
+   //SQL Expression
+   df.selectExpr(
+     "CustomerID",
+     "(POWER((Quantity * UnitPrice), 2.0) +5) as realQuantity"
+   ).show(2)
+   
+   // Rounding - We can cast to int, which will do the rounding. But we can use more precise functions
+   // round --> Round up
+   // bround --> round down
+   import org.apache.spark.sql.functions.{round, bround, lit}
+   df.select(round(col("UnitPrice"), 1).alias("rounded"), col("UnitPrice")).show(5)
+   
+   // Round up and Round Down
+   df.select(round(lit(2.5)), bround(lit(2.5))).show(2)
+   
+   
+   
   }
 }
