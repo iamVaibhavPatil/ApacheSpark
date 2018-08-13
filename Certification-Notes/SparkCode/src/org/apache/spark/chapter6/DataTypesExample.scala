@@ -120,5 +120,29 @@ object DataTypesExample {
    df.stat.corr("Quantity", "UnitPrice")
    df.select(corr("Quantity", "UnitPrice")).show()
    
+   // Computing summary statistics for numeric columns - describe method on DataFrame.
+   // It will list count, mean, standard deviation, min and max on all numeric column
+   df.describe().show()
+   
+   // We can also use individual functions on columns to extract these values from DataFrame
+   import org.apache.spark.sql.functions.{count, mean, stddev_pop, min, max}
+   
+   // Stats function
+   val quantileProbs = Array(0.5)
+   val relError = 0.05
+   df.stat.approxQuantile("UnitPrice", quantileProbs, relError)
+   
+   // Cross tabulation or frequent item pairs
+   df.stat.crosstab("StockCode", "Quantity").show()
+   
+   // Get the frequent item pairs
+   df.stat.freqItems(Seq("StockCode", "Quantity")).show()
+   
+   
+   // add unique increasing id - starting with 0
+   import org.apache.spark.sql.functions.{monotonically_increasing_id}
+   df.select(monotonically_increasing_id()).show(10)
+   
+   
   }
 }
