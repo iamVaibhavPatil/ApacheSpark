@@ -137,12 +137,14 @@ object DataTypesExample {
    
    // Get the frequent item pairs
    df.stat.freqItems(Seq("StockCode", "Quantity")).show()
-   
-   
+
    // add unique increasing id - starting with 0
    import org.apache.spark.sql.functions.{monotonically_increasing_id}
    df.select(monotonically_increasing_id()).show(10)
    
+   
+   
+   //*** - Working with Strings -
    
   }
 }
