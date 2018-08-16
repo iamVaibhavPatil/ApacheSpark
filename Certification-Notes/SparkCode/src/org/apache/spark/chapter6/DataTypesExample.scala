@@ -146,5 +146,27 @@ object DataTypesExample {
    
    //*** - Working with Strings -
    
+   // Initialize Every word in string
+   import org.apache.spark.sql.functions.{initcap}
+   df.select(initcap(col("Description"))).show(2)
+   
+   // Uppercase and lowercase
+   import org.apache.spark.sql.functions.{upper,lower}
+   df.select(col("Description"), lower(col("Description")), upper(col("Description"))).show(5)
+   
+   //lpad,ltrim,rpad,rtrim,trim
+   import org.apache.spark.sql.functions.{lpad,ltrim,rpad,rtrim,trim}
+   df.select(
+     ltrim(lit("  HELLO    ")).as("ltrim"),
+     rtrim(lit("  HELLO    ")).as("rtrim"),
+     trim(lit("   HELLO    ")).as("trim"),       
+     lpad(lit("HELLO") ,3, "*").as("lp"),
+     rpad(lit("HELLO"), 10,"*").as("rp")
+   ).show(2)
+   
+   // Regular Expression
+   
+   
+   
   }
 }
