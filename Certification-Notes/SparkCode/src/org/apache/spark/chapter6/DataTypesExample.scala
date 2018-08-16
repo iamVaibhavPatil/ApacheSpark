@@ -189,7 +189,12 @@ object DataTypesExample {
      col("Description")
    ).show(5)
    
-   
+   // Contains - To check if the value exists
+   val containsBlack = col("Description").contains("BLACK")
+   val containsWhite = col("Description").contains("WHITE")
+   df.withColumn("hasSimpleColor", containsBlack.or(containsWhite))
+     .where("hasSimpleColor")
+     .select("Description").show(5, false)
    
    
    
