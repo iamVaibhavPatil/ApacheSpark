@@ -189,14 +189,23 @@ object DataTypesExample {
      col("Description")
    ).show(5)
    
-   // Contains - To check if the value exists
+   // Contains - To check if the value exists - This is for Scala
+   // in Python, we can use instr function for contains checking
    val containsBlack = col("Description").contains("BLACK")
    val containsWhite = col("Description").contains("WHITE")
    df.withColumn("hasSimpleColor", containsBlack.or(containsWhite))
      .where("hasSimpleColor")
      .select("Description").show(5, false)
    
+   //Dynamic number of arguments using - varargs
+   val simpleColors3 = Seq("black", "white", "red", "green", "blue")
+   val selectedColumns = simpleColors3.map(color => {
+     col("Description").contains(color.toUpperCase()).alias(s"is_$color")
+   }):+expr("*")
    
+   df.select(selectedColumns:_*)
+     .where(col("is_white").or(col("is_red")))
+     .show(5, false)
    
   }
 }
