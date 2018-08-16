@@ -181,6 +181,17 @@ object DataTypesExample {
    import org.apache.spark.sql.functions.translate
    df.select(translate(col("Description"), "LEET", "1337"), col("Description")).show(5)
    
+   // Extracting Data - Pulling out first mentioned color
+   import org.apache.spark.sql.functions.{regexp_extract}
+   val regexString2 = simpleColors.map(_.toUpperCase()).mkString("(", "|", ")")
+   df.select(
+     regexp_extract(col("Description"), regexString2, 1).as("color_clean"),
+     col("Description")
+   ).show(5)
+   
+   
+   
+   
    
   }
 }
