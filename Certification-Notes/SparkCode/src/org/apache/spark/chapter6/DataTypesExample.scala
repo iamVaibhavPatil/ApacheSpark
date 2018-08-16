@@ -177,6 +177,10 @@ object DataTypesExample {
      regexp_replace(col("Description"), regexString, "COLOR").as("COLOR_CLEAN")
    ).show(5)
    
+   // translate - Character level replacement - Will replace all instances of a character with the indexed character
+   import org.apache.spark.sql.functions.translate
+   df.select(translate(col("Description"), "LEET", "1337"), col("Description")).show(5)
+   
    
   }
 }
