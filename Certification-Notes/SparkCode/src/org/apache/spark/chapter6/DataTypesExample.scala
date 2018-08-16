@@ -165,7 +165,17 @@ object DataTypesExample {
    ).show(2)
    
    // Regular Expression
+   // regexp_extract - Extract Values
+   // regexp_replace - Replace Values
    
+   // Regular expression to replace color names with 'COLOR' string
+   import org.apache.spark.sql.functions.{regexp_replace}
+   val simpleColors = Seq("BLACK","WHITE","GREEN","RED","BLUE")
+   val regexString = simpleColors.map(x => x.toUpperCase()).mkString("|")
+   df.select(
+     col("Description"),
+     regexp_replace(col("Description"), regexString, "COLOR").as("COLOR_CLEAN")
+   ).show(5)
    
    
   }
