@@ -310,7 +310,7 @@ object DataTypesExample {
    //*** - Working with Complex Types
    // 3 complex types - structs, arrays, maps
    
-   //struct - DataFrames with DataFrame
+   // *struct - DataFrames with DataFrame
    df.selectExpr("(Description, InvoiceNo) as complex", "*").show(5, false)
    df.selectExpr("struct(Description, InvoiceNo) as complex", "*").show(5, false)
    
@@ -325,7 +325,8 @@ object DataTypesExample {
    // All values in complex type
    complexDF.select("complex.*")
    
-   // Arrays - Arrays of Data
+   
+   // *Arrays - Arrays of Data
    
    // Split - To turn description column into complex type arrays, use split to split into arrays of words
    import org.apache.spark.sql.functions.{split}
@@ -346,8 +347,18 @@ object DataTypesExample {
    
    df.withColumn("splitted", split(col("Description"), " "))
      .withColumn("exploded", explode(col("splitted")))
-     .select("Description", "splitted", "InvoiceNo", "exploded").show(5, false)
+     .select("Description", "splitted", "InvoiceNo", "exploded").show(20, false)
    
-   
+   // *Maps - key-value pairs of columns.
+   import org.apache.spark.sql.functions.map
+   val complexMap = df.select(map(col("Description"), col("InvoiceNo")).alias("complex_map"))
+   complexMap.show(5, false)
+     
+   // We can query the column using the key. missing key will return null
+   complexMap.selectExpr("complex_map['WHITE METAL LANTERN']").show(2)
+     
+   //explode - Explodes map types, which will turn them into (Key, value) columns.
+   complexMap.selectExpr("explode(complex_map)").show(2, false)
+    
   }
 }
