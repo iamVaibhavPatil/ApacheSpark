@@ -341,6 +341,12 @@ object DataTypesExample {
    import org.apache.spark.sql.functions.array_contains
    df.select(array_contains(split(col("Description"), " "), "WHITE")).show(2, false)
    
+   // explode - Takes a column that consists of arrays and creates one row(with rest of values duplicated) per value in the array
+   import org.apache.spark.sql.functions.explode
+   
+   df.withColumn("splitted", split(col("Description"), " "))
+     .withColumn("exploded", explode(col("splitted")))
+     .select("Description", "splitted", "InvoiceNo", "exploded").show(5, false)
    
    
   }
