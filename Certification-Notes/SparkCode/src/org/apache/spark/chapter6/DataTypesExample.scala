@@ -308,6 +308,24 @@ object DataTypesExample {
    
    
    //*** - Working with Complex Types
+   // 3 complex types - structs, arrays, maps
+   
+   //struct - DataFrames with DataFrame
+   df.selectExpr("(Description, InvoiceNo) as complex", "*").show(5, false)
+   df.selectExpr("struct(Description, InvoiceNo) as complex", "*").show(5, false)
+   
+   import org.apache.spark.sql.functions.struct
+   val complexDF = df.select(struct("Description", "InvoiceNo").alias("complex"))
+   complexDF.createOrReplaceTempView("complexDfTable")
+   
+   //We need to either dot(.) or getField method to get the subfield from complex
+   complexDF.select("complex.Description").show()
+   complexDF.select(col("complex").getField("Description")).show()
+   
+   // All values in complex type
+   complexDF.select("complex.*")
+   
+   
    
   }
 }
