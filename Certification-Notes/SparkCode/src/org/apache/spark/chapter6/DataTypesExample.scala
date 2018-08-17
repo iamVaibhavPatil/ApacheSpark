@@ -207,5 +207,23 @@ object DataTypesExample {
      .where(col("is_white").or(col("is_red")))
      .show(5, false)
    
+     
+     
+   //*** - Working with Dates and Timestamps
+   // spark.conf.sessionLocaleTimeZone - To set the timezone
+   // TimestampType - Supports only second level precision. If we are going to be working with milliseconds or microseconds, we need to use longs.
+     
+   // Create Simple Table
+   import org.apache.spark.sql.functions.{current_date, current_timestamp}
+   val dateDF = spark.range(10)
+     .withColumn("today", current_date())
+     .withColumn("now", current_timestamp())  
+   dateDF.createOrReplaceTempView("dateTable")
+   
+   dateDF.printSchema()
+   dateDF.show(10, false)
+     
+   
+     
   }
 }
