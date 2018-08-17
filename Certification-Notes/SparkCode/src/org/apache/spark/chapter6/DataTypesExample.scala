@@ -360,5 +360,41 @@ object DataTypesExample {
    //explode - Explodes map types, which will turn them into (Key, value) columns.
    complexMap.selectExpr("explode(complex_map)").show(2, false)
     
+   
+   //***- Working with JSON
+   // We can directly operate on strings of JSON in Spark and parse JSON or extract JSON Objects.
+   
+   val jsonDF = spark.range(1).selectExpr("""
+     '{"myJSONKey" : {"myJSONValue" : [1, 2, 3]}}' as jsonString
+     """)
+   jsonDF.show(1, false)
+   
+   // get_json_object - Query JSON object, be it a dictionary or array
+   // json_tuple - query JSON object if it has only one level of nesting
+   import org.apache.spark.sql.functions.{get_json_object, json_tuple}
+   jsonDF.select(
+     get_json_object(col("jsonString"), "$.myJSONKey.myJSONValue[1]") as "column",
+     json_tuple(col("jsonString"), "myJSONKey")).show(2)
+   
+   
+   // to_json - convert StructType into JSON string
+   import org.apache.spark.sql.functions.{to_json}
+   df.selectExpr("(InvoiceNo, Description) as mystruct")
+     .select(to_json(col("mystruct"))).show(10, false)
+   
+   // from_json - Parse JSON data back to column. We need to specify the schema for parsing
+   import org.apache.spark.sql.functions.from_json
+   import org.apache.spark.sql.types._
+   val parseSchema = new StructType(Array(
+     new StructField("InvoiceNo", StringType, true),
+     new StructField("Description", StringType, true)
+   ))
+   df.selectExpr("(InvoiceNo, Description) as mystruct")
+     .select(to_json(col("mystruct")).alias("newJSON"))
+     .select(from_json(col("newJSON"), parseSchema).as("Parsed JSON to Array Struct"), col("newJSON")).show(5, false)
+   
+     
+   //***- User Defined Functions
+     
   }
 }
