@@ -223,7 +223,34 @@ object DataTypesExample {
    dateDF.printSchema()
    dateDF.show(10, false)
      
+   // Add or Subtract date
+   import org.apache.spark.sql.functions.{date_add, date_sub}
+   dateDF.select(date_add(col("today"), 5), date_sub(col("today"), 5)).show(2)
    
+   // datediff - Returns Number of days between 2 dates
+   // months_between - number of months between 2 dates
+   // to_date - allows to convert a string to a date. optionally with a specified format(Java SimpleDateFormat)
+   import org.apache.spark.sql.functions.{datediff, months_between, to_date}
+
+   dateDF.withColumn("week_ago", date_sub(col("today"), 7))
+     .select(datediff(col("week_ago"), col("today"))).show(1)
+     
+   // months_between
+   dateDF.select(
+     to_date(lit("2016-01-01")).alias("start"),
+     to_date(lit("2017-02-01")).alias("end")
+   ).select(months_between(col("start"), col("end"))).show(1)
+   
+   // to_date
+   spark.range(5).withColumn("date", lit("2017-01-01"))
+     .select(to_date(col("date"))).show(1)
+   
+   // Date Format with Spark - Spark will return null, if not able to parse the date instead of throwing error.
+   // year-month-day to year-day-month
+   dateDF.select(to_date(lit("2016-20-12")), to_date(lit("2017-12-11"))).show(1)
+   
+   // As Spark does not know the format and returns null, We can fix above issue of null, by specifying the Java SimpleDateFormat. 
+     
      
   }
 }
