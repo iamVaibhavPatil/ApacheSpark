@@ -325,6 +325,22 @@ object DataTypesExample {
    // All values in complex type
    complexDF.select("complex.*")
    
+   // Arrays - Arrays of Data
+   
+   // Split - To turn description column into complex type arrays, use split to split into arrays of words
+   import org.apache.spark.sql.functions.{split}
+   val complexArrayDF = df.select(split(col("Description"), " ").alias("array_complex"))
+   complexArrayDF.show(2, false)
+   complexArrayDF.selectExpr("array_complex[0]").show(2)
+   
+   // size - Determine array length
+   import org.apache.spark.sql.functions.size
+   df.select(size(split(col("Description"), " "))).show(2, false)
+   
+   // array_contains - Check if the Array contains value
+   import org.apache.spark.sql.functions.array_contains
+   df.select(array_contains(split(col("Description"), " "), "WHITE")).show(2, false)
+   
    
    
   }
