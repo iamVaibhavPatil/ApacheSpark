@@ -249,8 +249,23 @@ object DataTypesExample {
    // year-month-day to year-day-month
    dateDF.select(to_date(lit("2016-20-12")), to_date(lit("2017-12-11"))).show(1)
    
-   // As Spark does not know the format and returns null, We can fix above issue of null, by specifying the Java SimpleDateFormat. 
-     
-     
+   // As Spark does not know the format and returns null, We can fix above issue of null, by specifying the Java SimpleDateFormat.
+   // to_date - Date format is optional
+   // to_timestamp - Date format is required
+   
+   val dateFormat = "yyyy-dd-MM"
+   val cleanDateDF = spark.range(1).select(
+     to_date(lit("2017-12-11"), dateFormat).alias("date"),
+     to_date(lit("2017-20-12"), dateFormat).alias("date2")
+   )
+   cleanDateDF.createOrReplaceTempView("dateTable2")
+   cleanDateDF.show()
+   
+   import org.apache.spark.sql.functions.to_timestamp
+   cleanDateDF.select(to_timestamp(col("date"), dateFormat)).show()
+   
+   
+   
+   
   }
 }
