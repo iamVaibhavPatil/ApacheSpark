@@ -394,7 +394,43 @@ object DataTypesExample {
      .select(from_json(col("newJSON"), parseSchema).as("Parsed JSON to Array Struct"), col("newJSON")).show(5, false)
    
      
-   //***- User Defined Functions
+   //***- User Defined Functions(UDFs)
+   // We can define our own custom transformations using Scala or Python and use external libraries. 
+   // These are just functions that are registered as temporary functions to be used in that specific SparkSession or Context
      
+   // Write a function that takes number and raises it to power of 3
+   val udfDF = spark.range(5).toDF("num")
+   power3(2.0)
+     
+   // Now we created and tested the function. Now we need to register the function with Spark, so we can use them on all of our worker machines.
+   // Spark will serialize the function on the driver and transfer it over the network to all executor processes. This happens regardless of language.
+   
+   // If function is written in Scala or Java - We can use directly on JVM
+   /* If function is written in Python - Spark starts a Python process on the worker, serializes all of the data to a format that Python understands,
+   execute the function row by row on that data in the Python process, and then finally returns the results of the row operations to the JVM and Spark.
+   Check for user_defined_functions_python.PNG */ 
+   
+   // Starting Python process is expensive so recommendation is to write udf in Scala or Java.
+   
+   // Register function to make it available as a DataFrame
+   import org.apache.spark.sql.functions.udf
+   val power3udf = udf(power3(_:Double):Double)
+   
+   // Use the function
+   udfDF.select(power3udf(col("num"))).show(false)
+   
+   // We can't use this function within string expressions, but we cna register this as Spark SQL function. Then it can be used in any language
+   spark.udf.register("power3", power3(_:Double):Double)
+   udfDF.selectExpr("power3(num)").show(2)
+   
+   // We can also use UDF/UDAF creation via Hive syntax. First we need to enable support while creating SparkSession object
+   //SparkSession.builder().enableHiveSupport(), then we can register UDFs in SQL. This is only supported with precompiled Java/Scala packages, we need to sepcify them as dependency.
+   
   }
+  
+  //Write a function that takes number and raises it to power of 3
+  def power3(number: Double): Double = {
+    return number * number * number  
+  }
+  
 }
