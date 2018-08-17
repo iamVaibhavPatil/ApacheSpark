@@ -265,7 +265,33 @@ object DataTypesExample {
    cleanDateDF.select(to_timestamp(col("date"), dateFormat)).show()
    
    
+   //*** - Working with Nulls in Data
    
+   // Use .na subpackage of DataFrame
+   
+   // coalesce - select first non-null value from set of columns
+   import org.apache.spark.sql.functions.coalesce
+   df.select(coalesce(col("Description")), coalesce(col("CustomerId"))).show()
+   
+   // SQL Functions for Null
+   // ifnull - returns second value if the first is null, and default to first
+   // nullif - returns null if two values are equal or else returns second if they are not equal
+   // nvl - returns second value if first is null, but defaults to first
+   // nvl2 - returns second value if the first is not null, otherwise it will return the last specified value(else_value)
+   
+   spark
+     .sql(
+         "SELECT ifnull(null, 'return_value'), nullif('value','value'), nvl(null, 'return_value'), nvl2('not_null','return_value','else_value')")
+     .show()
+   
+   // drop - removed rows that contains nulls
+   // drop("any") - drops a row if any of the values are null
+   // drop("all") - drops a row only if all values are null or NaN for that row
+   // Pass to certain columns
+   df.na.drop().show(5, false)
+   df.na.drop("any").show(5, false)
+   df.na.drop("all").show(5, false)
+   df.na.drop("all", Seq("StockCode", "InvoiceNo")).show(5, false)
    
   }
 }
