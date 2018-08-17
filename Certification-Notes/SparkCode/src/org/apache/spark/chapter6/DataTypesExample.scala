@@ -293,5 +293,18 @@ object DataTypesExample {
    df.na.drop("all").show(5, false)
    df.na.drop("all", Seq("StockCode", "InvoiceNo")).show(5, false)
    
+   // fill() - fill one or more columns with set of values for null value in the column
+   // fill(5:Integer) - Column of type Integer
+   // fill(5:Double) - Column of type Double
+   // We can also specify scala map for column with values to fill for null
+   df.na.fill("All null values becomes this string")
+   df.na.fill(5, Seq("StockCode", "InvoiceNo")).show(5)
+   
+   val fillColValues = Map("StockCode" -> 5, "Description" -> "No Value")
+   df.na.fill(fillColValues).show(5)
+   
+   // replace
+   
+   
   }
 }
