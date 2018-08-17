@@ -303,8 +303,11 @@ object DataTypesExample {
    val fillColValues = Map("StockCode" -> 5, "Description" -> "No Value")
    df.na.fill(fillColValues).show(5)
    
-   // replace
+   // replace - replace all values in certain column according to their current value. New value type should match with original value type
+   df.na.replace("Description", Map("" -> "UNKNOWN")).show(5)
    
+   
+   //*** - Working with Complex Types
    
   }
 }
