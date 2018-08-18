@@ -259,5 +259,19 @@ object AggregationsExamples {
       .selectExpr("Date", "Country", "`sum(Quantity)` as total_quantity")
       .orderBy("Date")
     cubDF.show()
+    
+    /* Grouping Metadata(grouping_id) - Gives columns specifying the level of aggregation that we have in result set.
+     * There are 4 distinct grouping ids
+     * 0 - Gives total quantity for individual customerId and StockCode combinations
+     * 1 - Gives total quantity on per customer basis, regardless of item purchased
+     * 2 - Appear for all aggregation of individual stock codes. Total quantity per stock code, regardless of customer
+     * 3 - highest level of aggregation. Gives total quantity regardless of customerId and stockCode
+     * */
+    import org.apache.spark.sql.functions.{grouping_id, sum, expr}
+    dfNoNull.cube("CustomerId", "StockCode").agg(grouping_id(), sum("Quantity"))
+      .orderBy(expr("grouping_id").desc)
+      .show()
+    
+    
   }
 }
