@@ -77,7 +77,28 @@ object AggregationsExamples {
     import org.apache.spark.sql.functions.sum
     df.select(sum("Quantity")).show()
     
+    // sumDistinct - sum a distinct set of values
+    import org.apache.spark.sql.functions.sumDistinct
+    df.select(sumDistinct("Quantity")).show()
     
+    /* avg(mean) - We can calculate avg by dividing sum by count, but Spark provides an easier way to get that value by avg or mean.
+     * Below will return same result in all 3 columns.
+     * */
+    import org.apache.spark.sql.functions.{avg, mean, expr}
+    df.select(
+      count("Quantity").alias("total_transactions"),
+      sum("Quantity").alias("total_purchase"),
+      avg("Quantity").alias("avg_purchases"),
+      mean("Quantity").alias("mean_purchases")
+    ).selectExpr(
+      "total_purchase / total_transactions",
+      "avg_purchases",
+      "mean_purchases"
+    ).show()
+    
+    /* 
+     * 
+     * */ 
     
   }
 }
