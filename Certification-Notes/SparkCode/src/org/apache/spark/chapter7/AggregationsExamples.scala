@@ -96,9 +96,17 @@ object AggregationsExamples {
       "mean_purchases"
     ).show()
     
-    /* 
+    /* Variance and Standard Deviation - Calculating mean brings up the question about the variance and deviation as they both 
+     * are measures of spread of the data around the mean.
+     * Variance - Average of the squared differences from the mean
+     * Standard Deviation - Square root of the variance
      * 
+     * 1) Sample Standard Deviation - Default for Spark, if we dont specify and use variance or stddev function
+     * 2) Population Standard Deviation
      * */ 
+    import org.apache.spark.sql.functions.{var_samp,stddev_samp}
+    import org.apache.spark.sql.functions.{var_pop,stddev_pop}
+    df.select(var_pop("Quantity"), var_samp("Quantity"), stddev_pop("Quantity"), stddev_samp("Quantity")).show()
     
   }
 }
