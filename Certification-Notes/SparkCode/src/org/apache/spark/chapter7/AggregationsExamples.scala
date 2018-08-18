@@ -4,6 +4,12 @@ import org.apache.spark._
 import org.apache.spark.SparkContext._
 import org.apache.spark.sql._
 import org.apache.log4j._
+import org.apache.spark.sql.expressions.UserDefinedAggregateFunction
+import org.apache.spark.sql.types.StructType
+import org.apache.spark.sql.types.StructField
+import org.apache.spark.sql.types.BooleanType
+import org.apache.spark.sql.types.DataType
+import org.apache.spark.sql.expressions.MutableAggregationBuffer
 
 object AggregationsExamples {
 
@@ -269,9 +275,73 @@ object AggregationsExamples {
      * */
     import org.apache.spark.sql.functions.{grouping_id, sum, expr}
     dfNoNull.cube("CustomerId", "StockCode").agg(grouping_id(), sum("Quantity"))
-      .orderBy(expr("grouping_id").desc)
+      .orderBy(expr("grouping_id()").desc)
       .show()
     
+    /* Pivot - Convert Row into a column.
+     * With Pivot on Country column we can aggregate according to some function for each of those countries and display them in an
+     * easy to query way.
+     * */
+    val pivoted = dfWithDate.groupBy("date").pivot("Country").sum()
+    pivoted.where("date > '2011-12-05'").select("date", "`USA_sum(Quantity)`").show()
+      
     
+    /***** User-Defined Aggregation Functions ****
+     * We can define UDAFs to compute calculations over group of input data as oppose to single row.
+     * Spark maintains a single AggregationBuffer to store intermediate results for every group of input data.
+     * 
+     * To create UDAF, we need to inherit from UserDefinedAggregationFunction base class and implement below methods -
+     * 
+     * inputSchema - represents input arguments as StructType
+     * bufferSchema - represents intermediate UDAF results as a StructType
+     * dataType - represents return DataType
+     * deterministic - is a boolean values that specifies whether this UDAF will return same results for a given input
+     * initialize - allows you to initialize values of an aggregation buffer
+     * update - describes how we should update the internal buffer based on a given row
+     * merge - describes how two aggregation buffers should be merged
+     * evaluate- will generate final result of an aggregation
+     * 
+     * Lets instantiate BoolAnd class and register it as UDAF
+     * 
+     * */  
+    val ba = new BoolAnd
+    spark.udf.register("boolean", ba)
+    import org.apache.spark.sql.functions._
+    spark.range(1)
+      .selectExpr("explode(array(TRUE, TRUE, TRUE)) as t")
+      .selectExpr("explode(array(TRUE, FALSE, TRUE)) as f", "t")
+      .select(ba(col("t")), expr("boolean(f)"))
+      .show()
+  }
+}
+
+/*
+ * Following class will implement a function, which will inform us whether all the rows for given column are true.
+ * If they are not, it will return false.
+ * */
+class BoolAnd extends UserDefinedAggregateFunction {
+  
+  def inputSchema: StructType = StructType(StructField("value", BooleanType) :: Nil)
+  
+  def bufferSchema: StructType = StructType(StructField("result", BooleanType) :: Nil)
+  
+  def dataType: DataType = BooleanType
+  
+  def deterministic: Boolean = true
+  
+  def initialize(buffer: MutableAggregationBuffer): Unit = {
+    buffer(0) = true
+  }
+  
+  def update(buffer: MutableAggregationBuffer,input: Row): Unit = {
+    buffer(0) = buffer.getAs[Boolean](0) && input.getAs[Boolean](0)
+  }
+  
+  def merge(buffer1: MutableAggregationBuffer,buffer2: Row): Unit = {
+    buffer1(0) = buffer1.getAs[Boolean](0) && buffer2.getAs[Boolean](0)
+  }
+  
+  def evaluate(buffer: Row): Any = {
+    buffer(0)
   }
 }
