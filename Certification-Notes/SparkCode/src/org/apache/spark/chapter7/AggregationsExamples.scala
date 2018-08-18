@@ -239,10 +239,25 @@ object AggregationsExamples {
       ORDER BY CustomerId DESC, StockCode DESC
       """).show()  
    
-    /* Rollups
+    /* Rollups - Rollup is a multidimensional aggregation that performs variety of group by style calculations for us.
      * 
+     * Below rollup will looks across time(with new Date column) and space(with country column) and creates a new DataFrame
+     * that includes the grand total over all dates, the grand total for each date in the DataFrame, and the subtotal for each country
+     * on each date in the DataFrame
      * 
-     * */  
-      
+     * null in both columns specifies the grand total across both of these columns
+     * */
+    val rolledUpDF = dfNoNull.rollup("Date", "Country").agg(sum("Quantity"))
+      .selectExpr("Date", "Country", "`sum(Quantity)` as total_quantity")
+      .orderBy("Date")
+    rolledUpDF.show()
+    
+    /* Cube - Cube takes rollups to deeper level. This is greate for creating summary table which can be used later.
+     * It answers all the aggregation question across all columns
+     * */
+    val cubDF = dfNoNull.cube("Date", "Country").agg(sum("Quantity"))
+      .selectExpr("Date", "Country", "`sum(Quantity)` as total_quantity")
+      .orderBy("Date")
+    cubDF.show()
   }
 }
