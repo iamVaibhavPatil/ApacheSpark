@@ -158,7 +158,14 @@ object AggregationsExamples {
       expr("count(Quantity)")
     ).show()
     
+    /* Grouping with Maps - We can also specify transformations as a series of Maps for which the key is the column, 
+     * and the value is the aggregation function that we would like to perform on column.
+     * */
+    df.groupBy("InvoiceNo").agg("Quantity" -> "avg", "Quantity" -> "stddev_pop").show()
     
     
+    /* **** Window Functions ****
+     * 
+     */
   }
 }
