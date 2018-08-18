@@ -23,6 +23,9 @@ object JoinsExamples {
     spark.conf.set("spark.sql.shuffle.partition", "5")
     
     
+    /* **** Join Expression  *****
+     * 
+     * */
     
     
   }

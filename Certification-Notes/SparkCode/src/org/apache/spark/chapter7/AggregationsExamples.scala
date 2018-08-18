@@ -286,7 +286,7 @@ object AggregationsExamples {
     pivoted.where("date > '2011-12-05'").select("date", "`USA_sum(Quantity)`").show()
       
     
-    /***** User-Defined Aggregation Functions ****
+    /* **** User-Defined Aggregation Functions ****
      * We can define UDAFs to compute calculations over group of input data as oppose to single row.
      * Spark maintains a single AggregationBuffer to store intermediate results for every group of input data.
      * 
