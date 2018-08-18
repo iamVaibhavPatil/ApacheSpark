@@ -213,8 +213,36 @@ object AggregationsExamples {
     
       
     /* **** Grouping Sets ****
+     * group-by is used to aggregate on a set of columns. But when we want aggregation across multiple groups. We achieve this by using grouping sets.
+     * Grouping set are low level tool for combining set of aggregations together.
      * 
+     * Below we will get the total quantity of all stock codes and customers using grouping sets. 
+     * Grouping set depend on null values for aggregation levels. If you do not filter out null values, you will get incorrect results.
+     * This applies to cubes, rollups, and grouping sets
+     * 
+     * GROUPING SET - Only available in SQL. To perform same in DataFrame we need to use rollup and cube operators
      * */
+    val dfNoNull = dfWithDate.drop()
+    dfNoNull.createOrReplaceTempView("dfNoNull")
     
+    // Grouping two columns
+    spark.sql("""
+      SELECT CustomerId, StockCode, sum(Quantity) FROM dfNoNull
+      GROUP BY CustomerId, StockCode
+      ORDER BY CustomerId DESC, StockCode DESC
+      """).show()
+    
+    // Grouping set
+    spark.sql("""
+      SELECT CustomerId, StockCode, sum(Quantity) FROM dfNoNull
+      GROUP BY CustomerId, StockCode GROUPING SETS((CustomerId, StockCode))
+      ORDER BY CustomerId DESC, StockCode DESC
+      """).show()  
+   
+    /* Rollups
+     * 
+     * 
+     * */  
+      
   }
 }
