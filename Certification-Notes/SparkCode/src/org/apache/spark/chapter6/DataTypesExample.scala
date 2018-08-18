@@ -36,11 +36,11 @@ object DataTypesExample {
     df.createOrReplaceTempView("dfTable")
     df.show()
     
-    //*** - Converting to Spark type - using lit
+    //**** Converting to Spark type - using lit ****
     import org.apache.spark.sql.functions.lit
     df.select(lit(5), lit("five"), lit(5.0)).show()
     
-    //*** - Working with Boolean
+    //**** Working with Boolean ****
     import org.apache.spark.sql.functions.col
     df.where(col("InvoiceNo").equalTo(536365))
       .select("InvoiceNo", "Description")
@@ -92,7 +92,7 @@ object DataTypesExample {
    
      
      
-   //*** - Working with Numbers - Second most important task after filtering is counting things
+   //**** Working with Numbers - Second most important task after filtering is counting things ****
      
    // pow - function that raises a column to expressed power
    import org.apache.spark.sql.functions.{pow}
@@ -144,7 +144,7 @@ object DataTypesExample {
    
    
    
-   //*** - Working with Strings -
+   //**** Working with Strings ****
    
    // Initialize Every word in string
    import org.apache.spark.sql.functions.{initcap}
@@ -209,7 +209,7 @@ object DataTypesExample {
    
      
      
-   //*** - Working with Dates and Timestamps
+   //**** Working with Dates and Timestamps ****
    // spark.conf.sessionLocaleTimeZone - To set the timezone
    // TimestampType - Supports only second level precision. If we are going to be working with milliseconds or microseconds, we need to use longs.
      
@@ -265,7 +265,7 @@ object DataTypesExample {
    cleanDateDF.select(to_timestamp(col("date"), dateFormat)).show()
    
    
-   //*** - Working with Nulls in Data
+   //**** Working with Nulls in Data ****
    
    // Use .na subpackage of DataFrame
    
@@ -307,7 +307,7 @@ object DataTypesExample {
    df.na.replace("Description", Map("" -> "UNKNOWN")).show(5)
    
    
-   //*** - Working with Complex Types
+   //**** Working with Complex Types ****
    // 3 complex types - structs, arrays, maps
    
    // *struct - DataFrames with DataFrame
@@ -361,7 +361,7 @@ object DataTypesExample {
    complexMap.selectExpr("explode(complex_map)").show(2, false)
     
    
-   //***- Working with JSON
+   //**** Working with JSON ****
    // We can directly operate on strings of JSON in Spark and parse JSON or extract JSON Objects.
    
    val jsonDF = spark.range(1).selectExpr("""
@@ -394,7 +394,7 @@ object DataTypesExample {
      .select(from_json(col("newJSON"), parseSchema).as("Parsed JSON to Array Struct"), col("newJSON")).show(5, false)
    
      
-   //***- User Defined Functions(UDFs)
+   //**** User Defined Functions(UDFs) ****
    // We can define our own custom transformations using Scala or Python and use external libraries. 
    // These are just functions that are registered as temporary functions to be used in that specific SparkSession or Context
      
