@@ -165,7 +165,56 @@ object AggregationsExamples {
     
     
     /* **** Window Functions ****
-     * 
+     * Window can be used to do aggregation on specific window of data. A group-by takes data, and every row can go only into one grouping.
+     * A window function calculates return value for every input row of a table based on a group of rows, called a frame. Each row can fall into one or more frames.
+     * Spark defines 3 window functions - ranking functions, analytic functions, and aggregate functions.
      */
+    import org.apache.spark.sql.functions.{col, to_date}
+    val dfWithDate = df.withColumn("date", to_date(col("InvoiceDate"), "MM/d/yyyy H:mm"))
+    dfWithDate.createOrReplaceTempView("dfWithDate")
+    dfWithDate.show(false)
+    
+    /* First step to window function is to create a window specification.
+     * partitionBy - Defines, how we will be breaking our group
+     * orderBy - Defines, ordering within given partition
+     * rowsBetween - this is frame specification states which rows will be included in the frame based on its reference to the current row.
+     * */
+    import org.apache.spark.sql.expressions.Window
+    val windowSpec = Window
+      .partitionBy("CustomerId", "date")
+      .orderBy(col("Quantity").desc)
+      .rowsBetween(Window.unboundedPreceding, Window.currentRow)  // Include previous rows up to the current row
+      
+    /* Now we can use an aggregation function to learn more about specific customers.
+     * For example - Finding maximum purchase quantity over the time.
+     * In addition to this we indicate the window specification that defines to which frames of data this function will apply
+     * */
+    import org.apache.spark.sql.functions.max
+    val maxPurchaseQuantity = max(col("Quantity")).over(windowSpec) // Returns column or expression which can be used in DataFrame select
+    
+    /* Now we need to create purchase quantity rank which tells us which date had the maximum purchase quantity for every customer.
+     * dense_rank(), rank() function gives us the ranking over window.
+     * This also returns a column which can be used in the select statement of DataFrame
+     * */
+    import org.apache.spark.sql.functions.{dense_rank, rank}
+    val purchaseDenseRank =  dense_rank().over(windowSpec)
+    val purchaseRank = rank().over(windowSpec)
+
+    // Perform Select to view the calculated purchase over the window time
+    dfWithDate.where("CustomerId IS NOT NULL").orderBy("CustomerId")
+      .select(
+        col("CustomerId"),
+        col("date"),
+        col("Quantity"),
+        purchaseRank.alias("QuantityRank"),
+        purchaseDenseRank.alias("QuantityDenseRank"),
+        maxPurchaseQuantity.alias("maxPurchaseQuantity")
+      ).show()
+    
+      
+    /* **** Grouping Sets ****
+     * 
+     * */
+    
   }
 }
