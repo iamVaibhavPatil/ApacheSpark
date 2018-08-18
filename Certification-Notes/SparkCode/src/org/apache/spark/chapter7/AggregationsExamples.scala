@@ -39,10 +39,11 @@ object AggregationsExamples {
      * Here Count is action on DataFrame as opposed to transformation and it is eagerly evaluated.
      *  */
     print(df.count())
-    
-    
-    //**** Aggregation Functions ****
-    /* Aggregations are available as function in org.apache.spark.sql.functions package. 
+
+
+    /* **** Aggregation Functions ****
+     * 
+     * Aggregations are available as function in org.apache.spark.sql.functions package. 
      * There are some available on DataFrame in .stat
      * */
     
@@ -107,6 +108,57 @@ object AggregationsExamples {
     import org.apache.spark.sql.functions.{var_samp,stddev_samp}
     import org.apache.spark.sql.functions.{var_pop,stddev_pop}
     df.select(var_pop("Quantity"), var_samp("Quantity"), stddev_pop("Quantity"), stddev_samp("Quantity")).show()
+    
+    /* skewness and kurtosis - Measurements of extreme point in the data.
+     * skewness - Asymmetry of values in data around the mean
+     * kurtosis - measures of the tail of data.
+     * 
+     * These both are used when modeling data as a probability distribution of a random variable.
+     * */
+    import org.apache.spark.sql.functions.{skewness, kurtosis}
+    df.select(skewness("Quantity"), kurtosis("Quantity")).show()
+    
+    /* Covariance and Correlation - Campres interaction of values in two different columns
+     * 
+     * Correlation - Measures the Pearson Correlation coefficient between values in 2 columns, which is scaled between -1 and +1
+     * Covariance - Variance between 2 columns. Has both Sample and Population method.
+     * */
+    import org.apache.spark.sql.functions.{corr, covar_pop, covar_samp}
+    df.select(
+        corr("InvoiceNo", "Quantity"),
+        covar_samp("InvoiceNo", "Quantity"),
+        covar_pop("InvoiceNo", "Quantity")
+    ).show()
+    
+    /* Aggregating to Complex Types - We can also perform aggregation on complex type.
+     * We can collect list of values present in a given column or only unique values collecting to a set.
+     * We can pass the collection values in UDFs or can use them later on in pipeline.
+     * */
+    // Commented, as it takes lot of time to process
+    import org.apache.spark.sql.functions.{collect_list, collect_set}
+    //df.agg(collect_list("Country"), collect_set("Country")).show(false)
+    
+    
+    /* **** Grouping ****
+     * So far we have performed only DataFrame level aggregations. A common task is to perform calculations based on groups in the data.
+     * This is done on categorical data on which we group our data on one column and perform some calculations on other columns that end up in that group.
+     * 
+     * Grouping is done in two phases - 1) Specify the columns on which we would like to group, this returns RelationalGroupedDataSet
+     * 2) then, we specify the aggregation(s), this returns a DataFrame
+     * */
+    df.groupBy("InvoiceNo", "CustomerId").count().show()
+    
+    
+    /* Grouping with Expressions - We can sepcify aggregation function within expression.
+     * Instead of passing expression in select statement, we need to specify in agg, which makes it possible to pass any arbitrary expressions that have some aggregation.
+     * */
+    import org.apache.spark.sql.functions.expr
+    df.groupBy("InvoiceNo").agg(
+      count("Quantity").alias("Quan"),
+      expr("count(Quantity)")
+    ).show()
+    
+    
     
   }
 }
