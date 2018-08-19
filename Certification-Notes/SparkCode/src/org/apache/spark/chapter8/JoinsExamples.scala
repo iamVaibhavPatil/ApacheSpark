@@ -137,6 +137,19 @@ object JoinsExamples {
     (0, "Masters", "Duplicated Row", "Duplicated School")).toDF())
     
     graduateProgram2.createOrReplaceTempView("graduateProgram2")
-    graduateProgram2.join(person, joinExpression, joinType).show()    
+    graduateProgram2.join(person, joinExpression, joinType).show()
+    
+    
+    /* Left Anti Join
+     * Keep the rows in left dataset where keys do not appear in the right dataset.
+     * We can think of anti joins as a NOT IN sql filter
+     * */
+    joinType = "left_anti"
+    graduateProgram.join(person, joinExpression, joinType).show()
+    
+    // LEFT ANI JOIN SQL
+    spark.sql("SELECT * FROM graduateProgram LEFT ANTI JOIN person ON person.graduate_program = graduateProgram.id").show()
+    
+    
   }
 }
