@@ -201,6 +201,17 @@ object JoinsExamples {
     // Now When we try to access graduate_program column we will get ambiguity error
     person.join(gradProgramDupe, joinExpr).select("graduate_program").show()
       
+    /* To solve above problem, we can do 3 things
+     * 
+     * 1) Different Join Expression - Write String or Sequence join expression instead of Boolean expression
+     * 2) Drop column after the join
+     * 3) Rename column before join
+     *  */
+    
+    // Different Join Expression
+    person.join(gradProgramDupe, "graduate_program").select("graduate_program").show()
+    
+    //
       
   }
 }
