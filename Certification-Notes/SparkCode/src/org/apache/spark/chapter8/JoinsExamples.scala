@@ -179,5 +179,17 @@ object JoinsExamples {
      * spark.sql.crossJoin.enable = true in order to allow cross join without warning or without Spark trying to perform another join for you.
      * */
     
+    
+    /* **** Challenges When Using Joins ***** */
+    
+    /* * Joins on Complex Types
+     * Any expression is a valid join expression, assuming that it returns a Boolean.
+     * */
+    import org.apache.spark.sql.functions.expr
+    person.withColumnRenamed("id", "personId")
+      .join(sparkStatus, expr("array_contains(spark_status, id)")).show()
+    
+    
+    
   }
 }
