@@ -140,7 +140,7 @@ object JoinsExamples {
     graduateProgram2.join(person, joinExpression, joinType).show()
     
     
-    /* Left Anti Join
+    /* **** Left Anti Join *****
      * Keep the rows in left dataset where keys do not appear in the right dataset.
      * We can think of anti joins as a NOT IN sql filter
      * */
@@ -149,6 +149,16 @@ object JoinsExamples {
     
     // LEFT ANI JOIN SQL
     spark.sql("SELECT * FROM graduateProgram LEFT ANTI JOIN person ON person.graduate_program = graduateProgram.id").show()
+    
+    
+    /* **** Natural Join *****
+     * Perform a join by implicitly matching the columns between the two datasets with the same names.
+     * Left, right, and outer natural joins are all supported. We should always use this join with caution,
+     * because same column name in different DateFrames means different things.
+     * Below query will give wrong results, as id columns has different meaning in both DataFrames.
+     * */
+    spark.sql("SELECT * FROM graduateProgram NATURAL JOIN person").show()
+    
     
     
   }
