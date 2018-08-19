@@ -121,5 +121,22 @@ object JoinsExamples {
     // RIGHT OUTER JOIN SQL
     spark.sql("SELECT * FROM person RIGHT OUTER JOIN graduateProgram ON person.graduate_program = graduateProgram.id").show()    
     
+    
+    /* **** Left Semi Join *****
+     * keep the rows in left dataset where keys appear in the right dataset. Even if the ther are duplicate keys in left, those will be kept.
+     * We can think of left semi join as filters on DataFrame.
+     * */
+    joinType = "left_semi"
+    graduateProgram.join(person, joinExpression, joinType).show()
+    
+    // LEFT SEMI JOIN SQL
+    spark.sql("SELECT * FROM graduateProgram LEFT SEMI JOIN person ON person.graduate_program = graduateProgram.id").show()    
+     
+    // Duplicated Key in the left
+    val graduateProgram2 = graduateProgram.union(Seq(
+    (0, "Masters", "Duplicated Row", "Duplicated School")).toDF())
+    
+    graduateProgram2.createOrReplaceTempView("graduateProgram2")
+    graduateProgram2.join(person, joinExpression, joinType).show()    
   }
 }
