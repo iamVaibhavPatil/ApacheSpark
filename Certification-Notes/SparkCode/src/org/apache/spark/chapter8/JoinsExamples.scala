@@ -189,7 +189,18 @@ object JoinsExamples {
     person.withColumnRenamed("id", "personId")
       .join(sparkStatus, expr("array_contains(spark_status, id)")).show()
     
+    /* * Handling Duplicate Column Names
+     * Sometimes we might have duplicate columns in the result dataframe, if both dataframes which we are joining have same column names.
+     * In a DataFrame, each column has a unique ID within Spark's SQl Engine, Catalyst. This unique ID is purely internal and not something,
+     * that we can directly reference.
+     * */
+    val gradProgramDupe = graduateProgram.withColumnRenamed("id", "graduate_program")
+    val joinExpr = gradProgramDupe.col("graduate_program") === person.col("graduate_program")
+    person.join(gradProgramDupe, joinExpr).show()
     
-    
+    // Now When we try to access graduate_program column we will get ambiguity error
+    person.join(gradProgramDupe, joinExpr).select("graduate_program").show()
+      
+      
   }
 }
