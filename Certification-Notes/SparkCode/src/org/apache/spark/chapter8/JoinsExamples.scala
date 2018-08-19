@@ -160,6 +160,20 @@ object JoinsExamples {
     spark.sql("SELECT * FROM graduateProgram NATURAL JOIN person").show()
     
     
+    /* **** Cross Join *****
+     * Match every row in the left dataset with every row in right dataset. Cross-joins in simplest terms are inner joins that do
+     * not specify a predicate. Cross-join will match every single row in the left DataFrame to every single row in the right DataFrame.
+     * This will cause absolute explosion in the number of rows contained in the resulting DataFrame.
+     * If we have 1000 rows in each DataFrame, the cross join of these will result in 1000000 rows.
+     * */
+    joinType = "cross"
+    graduateProgram.join(person, joinExpression, joinType).show()
+    
+    // CROSS JOIN SQL
+    spark.sql("SELECT * FROM graduateProgram CROSS JOIN person ON person.graduate_program = graduateProgram.id").show()
+    
+    // We can also call out crossJoin on DataFrame itself
+    person.crossJoin(graduateProgram).show()
     
   }
 }
