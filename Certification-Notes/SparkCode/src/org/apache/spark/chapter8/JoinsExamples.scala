@@ -240,6 +240,9 @@ object JoinsExamples {
      * 
      * Refer - joining-2-big-tables.png. Both the DataFrames are large. This means that all the worker node(potentially every partition)
      * will need to communicate with another during the entire process.
+     * 
+     * An example might be a company that receives billions of messages every day from IoT, and need to identify day-over-day changes that have occurred.
+     * The way to do this is by joining deviceId, messageType, and date in one column, and date - 1 day in the other column. 
      * */
     
     /* ** Big Table-to-Small Table
