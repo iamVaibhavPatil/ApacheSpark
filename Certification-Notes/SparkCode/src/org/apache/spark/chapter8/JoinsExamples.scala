@@ -51,13 +51,13 @@ object JoinsExamples {
       (0, "Bill Chambers", 0, Seq(100)),
       (1, "Matei Zaharia", 1, Seq(500, 250, 100)),
       (2, "Michael Armbrust", 1, Seq(250, 100)))
-    .toDF("id", "name", "graduat_program", "spark_status")
+    .toDF("id", "name", "graduate_program", "spark_status")
     
-    val graduatProgram = Seq(
+    val graduateProgram = Seq(
       (0, "Masters", "School of Information", "UC Berkeley"),
-      (1, "Masters", "EECS", "UC Berkeley"),
-      (2, "Ph.D.", "EECS", "UC Berkeley"))
-    .toDF("id", "degreee", "department", "school")
+      (2, "Masters", "EECS", "UC Berkeley"),
+      (1, "Ph.D.", "EECS", "UC Berkeley"))
+    .toDF("id", "degree", "department", "school")
     
     val sparkStatus = Seq(
       (500, "Vice President"),
@@ -65,10 +65,27 @@ object JoinsExamples {
       (100, "Contributor"))
     .toDF("id", "status")
     
+    // Lets register above DataFrames as tables
+    person.createOrReplaceTempView("person")
+    graduateProgram.createOrReplaceTempView("graduateProgram")
+    sparkStatus.createOrReplaceTempView("sparkStatus")
     
     
+    /* **** Inner Join *****
+     * Join graduateProgram and person table to include rows with keys exists in both tables
+     * Inner join are the default join, so we just need to specify our left DataFrame and join the right in JOIN expression
+     * */
+    val joinExpression = person.col("graduate_program") === graduateProgram.col("id")
+    person.join(graduateProgram, joinExpression).show()
     
+    // SQL
+    spark.sql("SELECT * FROM person JOIN graduateProgram ON person.graduate_program = graduateProgram.id").show()
     
+    // We can also specify the join type explicitly
+    var joinType = "inner"
+    person.join(graduateProgram, joinExpression, joinType).show()
     
+    // INNER JOIN SQL
+    spark.sql("SELECT * FROM person INNER JOIN graduateProgram ON person.graduate_program = graduateProgram.id").show()
   }
 }
