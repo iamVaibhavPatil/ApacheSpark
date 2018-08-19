@@ -15,7 +15,7 @@ object JoinsExamples {
     // Create Spark Session
     val spark = SparkSession
       .builder()
-      .appName("AggregationsExamples")
+      .appName("JoinsExamples")
       .master("local[*]")
       .getOrCreate()
     
