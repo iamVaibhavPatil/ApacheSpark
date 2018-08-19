@@ -273,7 +273,15 @@ object JoinsExamples {
     
     // SQL interface can also provide hint to optimizer with MAPJOIN, BROADCAST and BROADCASTJOIN. These are not enforce, Optimizer can ignore them.
     
-    /* ** Little Table-to-little Table - Spark will decide how to join them.
+    /* ** Little Table-to-little Table - Spark will decide how to join them. We can force broadcast join we notice different behavior.
+     * */
+
+    
+    /* **** Conclusion ****
+     * If we partition our data correctly prior to a join, we can end up with much more efficient execution because even if a shuffle is planned,
+     * if the data from two different DataFrames is already located on the same machine, Spark can avoid the shuffle.
+     * 
+     * Some joins acts as filters, so we need to decide in what order the join should occur, which will reduce data sharing over the network.
      * */
 
   }
