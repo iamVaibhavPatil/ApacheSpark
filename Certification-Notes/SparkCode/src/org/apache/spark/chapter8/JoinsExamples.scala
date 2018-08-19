@@ -198,8 +198,8 @@ object JoinsExamples {
     val joinExpr = gradProgramDupe.col("graduate_program") === person.col("graduate_program")
     person.join(gradProgramDupe, joinExpr).show()
     
-    // Now When we try to access graduate_program column we will get ambiguity error
-    person.join(gradProgramDupe, joinExpr).select("graduate_program").show()
+    // Now When we try to access graduate_program column as below, we will get ambiguity error
+    //person.join(gradProgramDupe, joinExpr).select("graduate_program").show()
       
     /* To solve above problem, we can do 3 things
      * 
@@ -211,7 +211,22 @@ object JoinsExamples {
     // Different Join Expression
     person.join(gradProgramDupe, "graduate_program").select("graduate_program").show()
     
-    //
-      
+    // Drop column after the join
+    person.join(gradProgramDupe, joinExpr).drop(person.col("graduate_program")).select("graduate_program").show()
+    
+    // Rename column before join
+    val gradProgram3 = graduateProgram.withColumnRenamed("id", "grad_id")
+    val joinExpr3 = gradProgram3.col("grad_id") === person.col("graduate_program")
+    person.join(gradProgram3, joinExpr3).show()
+    
+    
+    /* **** How Spark Performs Joins ***** */
+    
+    
+    
+    
+    
+    
+    
   }
 }
