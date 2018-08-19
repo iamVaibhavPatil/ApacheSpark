@@ -220,9 +220,24 @@ object JoinsExamples {
     person.join(gradProgram3, joinExpr3).show()
     
     
-    /* **** How Spark Performs Joins ***** */
+    /* **** How Spark Performs Joins ***** \
+     * To understand how Spark performs joins, we need to understand two core resources at play 
+     * 1) node-to-node communication strategy
+     * 2) per node computation strategy.
+     * 
+     * Spark approaches cluster communication in two different ways during joins.
+     * 1) Shuffle join - Which results in all-to-all node communication
+     * 2) Broadcast join - Broadcast small table to all driver node to avoid later communication.
+     * 
+     * The core foundation of simplified view of joins is that Spark will have either big table or small table.
+     * 
+     * */
     
-    
+    /* ** Big Table-to-Big Table
+     * 
+     * 
+     * 
+     * */
     
     
     
