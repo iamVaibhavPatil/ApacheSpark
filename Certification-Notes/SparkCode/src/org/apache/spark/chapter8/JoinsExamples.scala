@@ -87,5 +87,19 @@ object JoinsExamples {
     
     // INNER JOIN SQL
     spark.sql("SELECT * FROM person INNER JOIN graduateProgram ON person.graduate_program = graduateProgram.id").show()
+    
+    
+    /* **** Outer Join *****
+     * Keep rows with keys that exist in either left or right datasets. If there is no equivalent row in either the left or
+     * the right DataFrame, Spark will insert null.
+     * */
+    joinType = "outer"
+    person.join(graduateProgram, joinExpression, joinType).show()
+    
+    // OUTER JOIN SQL
+    spark.sql("SELECT * FROM person FULL OUTER JOIN graduateProgram ON person.graduate_program = graduateProgram.id").show()
+    
+    
+    
   }
 }
