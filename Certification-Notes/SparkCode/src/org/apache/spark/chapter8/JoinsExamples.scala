@@ -175,5 +175,9 @@ object JoinsExamples {
     // We can also call out crossJoin on DataFrame itself
     person.crossJoin(graduateProgram).show()
     
+    /* Cross joins are dangerous, so we should use only when necessary. We can set the session level configuration
+     * spark.sql.crossJoin.enable = true in order to allow cross join without warning or without Spark trying to perform another join for you.
+     * */
+    
   }
 }
