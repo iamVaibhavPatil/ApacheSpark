@@ -246,10 +246,35 @@ object JoinsExamples {
      * */
     
     /* ** Big Table-to-Small Table
+     * When the table is small enough to fit into memory of single worker node, with some breathing room of course, we can optimize the join.
+     * This is called as broadcast join which means is that we will replicate our small DataFrame onto every worker node in the cluster.
+     * This sounds expensive, however, it prevents us from performing all-to-all communication during the entire join process. Instead, we
+     * perform it only once at the begining and them let each individual work node perform work without having to wait or communicate with
+     * any other node.
      * 
+     * Refer - broadcast-join.png. At the beginning of this join will be a large communication. However, immediately after first,
+     * there will be no further communication between nodes.
+     * This means that join will be perform on single node individually, making CPU the biggest bottleneck.
+     * 
+     * For our current set of data, we can see Spark has automatically set this up as a broadcast join. 
+     * 
+     * == Physical Plan ==
+					*BroadcastHashJoin [graduate_program#11], [id#27], Inner, BuildRight
+					:- LocalTableScan [id#9, name#10, graduate_program#11, spark_status#12]
+					+- BroadcastExchange HashedRelationBroadcastMode(List(cast(input[0, int, false] as bigint)))
+   				+- LocalTableScan [id#27, degree#28, department#29, school#30]
      * */
+    val joinExpr2 = person.col("graduate_program") === graduateProgram.col("id")
+    person.join(graduateProgram, joinExpr2).explain()
     
+    // With DataFrame API, we can also hint the optimizer that we would like to use broadcast join by using correct function on small DataFrame.
+    import org.apache.spark.sql.functions.broadcast
+    person.join(broadcast(graduateProgram), joinExpr2).explain()
     
+    // SQL interface can also provide hint to optimizer with MAPJOIN, BROADCAST and BROADCASTJOIN. These are not enforce, Optimizer can ignore them.
     
+    /* ** Little Table-to-little Table - Spark will decide how to join them.
+     * */
+
   }
 }
