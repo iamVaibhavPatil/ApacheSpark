@@ -234,12 +234,17 @@ object JoinsExamples {
      * */
     
     /* ** Big Table-to-Big Table
+     * When we have to join big table to another big table, we end up with shuffle join.
+     * In shuffle join, every node talks to every other node and they share the data according to which node has a certain key or set of keys on which we are joining.
+     * These joins are expensive because the network can become congested with traffic., especially if data is not partitioned well.
      * 
-     * 
-     * 
+     * Refer - joining-2-big-tables.png. Both the DataFrames are large. This means that all the worker node(potentially every partition)
+     * will need to communicate with another during the entire process.
      * */
     
-    
+    /* ** Big Table-to-Small Table
+     * 
+     * */
     
     
     
